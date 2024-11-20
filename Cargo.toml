@@ -2,5 +2,6 @@
 name = "rust_markdown_parser"
 version = "0.1.0"
 edition = "2021"
+description = "Simplified markdown parser implemented in Rust."
 
 [dependencies]

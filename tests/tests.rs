@@ -1,6 +1,5 @@
 #[cfg(test)]
 mod tests {
-    use super::*;
     use anyhow::Result;
     use pest::Parser;
     use pest_derive::Parser;

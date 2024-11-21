@@ -1,0 +1,30 @@
+space = _{ " " | "\t" }
+newline = _{ "\n" | "\r\n" }
+blankline = _{ (space* ~ newline)+ }
+
+markdown = { SOI ~ blankline? ~ (block ~ blankline?)* ~ EOI }
+
+block = _{ special_block | paragraph }
+special_block = _{ header | thematic_break | list | code_block }
+
+header = { header_hashtags ~ space ~ line_pars ~ newline? }
+header_hashtags = { "#"{1, 6} }
+
+thematic_break = { ("-"{3,} | "*"{3,} | "_"{3,}) ~ space* ~ newline? }
+
+list = _{ unordered_list | ordered_list }
+unordered_list = { (("- " | "* " | "+ ") ~ line_pars ~ newline?)+ }
+ordered_list = { (ASCII_DIGIT+ ~ "." ~ space ~ line_pars ~ newline?)+ }
+
+code_block = { "```" ~ newline ~ (!"```" ~ line ~ newline)* ~ "```" ~ newline? }
+paragraph = { line_pars ~ newline? ~ ((!special_block ~ line_pars) ~ newline?)* }
+
+line = { (!newline ~ ANY)+ }
+line_pars = { (!newline ~ inline)+ }
+inline = _{ link | bold | italic | text }
+link = { "[" ~ link_text ~ "]" ~ "(" ~ link_href ~ ")" }
+link_text = { (!"]" ~ ANY)* }
+link_href = { (!")" ~ ANY)* }
+bold = { ("**" ~ text ~ "**") | ("__" ~ text ~ "__") }
+italic = { ("*" ~ text ~ "*") | ("_" ~ text ~ "_") }
+text = { (!(newline | "[" | "*" | "_") ~ ANY)+ }

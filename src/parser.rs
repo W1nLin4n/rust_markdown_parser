@@ -2,15 +2,33 @@ use anyhow::Result;
 use pest::Parser;
 use pest_derive::Parser;
 use thiserror::Error;
+use std::{fs::File, io::Read};
 
 #[derive(Parser)]
-#[grammar = "markdown.pest"] // Path to the grammar file
+#[grammar = "markdown.pest"]
 struct MarkdownParser;
 
 #[derive(Error, Debug)]
 pub enum ParserError {
     #[error("Markdown parse error: {0}")]
     MarkdownParseError(String),
+    #[error("Error while trying to open {0}")]
+    FileOpenError(String),
+    #[error("Error while trying to read {0}")]
+    FileReadError(String),
+}
+
+pub fn markdown_file_to_html(path: String) -> Result<String> {
+    let mut file = match File::open(path.clone()) {
+        Err(_) => Err(ParserError::FileOpenError(path.clone()))?,
+        Ok(file) => file
+    };
+    
+    let mut markdown = String::new();
+    match file.read_to_string(&mut markdown) {
+        Err(_) => Err(ParserError::FileReadError(path.clone()))?,
+        Ok(_) => markdown_to_html(markdown)
+    }
 }
 
 pub fn markdown_to_html(markdown: String) -> Result<String> {
@@ -19,7 +37,7 @@ pub fn markdown_to_html(markdown: String) -> Result<String> {
             let html = parse_markdown(parsed.next().unwrap());
             Ok(html)
         }
-        Err(e) => Err(ParserError::MarkdownParseError(e.to_string()).into()),
+        Err(e) => Err(ParserError::MarkdownParseError(e.to_string()))?,
     }
 }
 

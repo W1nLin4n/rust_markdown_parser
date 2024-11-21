@@ -5,3 +5,5 @@ edition = "2021"
 description = "Simplified markdown parser implemented in Rust."
 
 [dependencies]
+pest = "2.7.14"
+pest_derive = "2.7.14"

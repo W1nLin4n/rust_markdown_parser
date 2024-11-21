@@ -1,8 +1,8 @@
 use anyhow::Result;
 use pest::Parser;
 use pest_derive::Parser;
-use thiserror::Error;
 use std::{fs::File, io::Read};
+use thiserror::Error;
 
 #[derive(Parser)]
 #[grammar = "markdown.pest"]
@@ -21,13 +21,13 @@ pub enum ParserError {
 pub fn markdown_file_to_html(path: String) -> Result<String> {
     let mut file = match File::open(path.clone()) {
         Err(_) => Err(ParserError::FileOpenError(path.clone()))?,
-        Ok(file) => file
+        Ok(file) => file,
     };
-    
+
     let mut markdown = String::new();
     match file.read_to_string(&mut markdown) {
         Err(_) => Err(ParserError::FileReadError(path.clone()))?,
-        Ok(_) => markdown_to_html(markdown)
+        Ok(_) => markdown_to_html(markdown),
     }
 }
 
